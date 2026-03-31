@@ -5,18 +5,30 @@
 ## 使用
 
 ```bash
-npm ci
-node generate.js
+pnpm install
+pnpm build
 ```
 
 生成的头像保存在 `public/avatar.webp`。
 
 ### 自定义尺寸
 
-通过环境变量 `SCALE` 指定点阵放大倍数（默认 6，图片尺寸 = 27 × SCALE）：
+通过环境变量 `SCALE` 指定点阵放大倍数（默认 1，图片尺寸 = 27 × SCALE 左右）：
 
 ```bash
-SCALE=10 node generate.js  # 生成 270x270
+SCALE=6 pnpm build  # 生成约 252x252
+```
+
+## 项目结构
+
+```
+src/
+├── index.js           # 入口，配置与流程编排
+├── render.js          # 将数值序列渲染为 RGBA 帧
+├── fonts/
+│   └── bitmap-5x7.js  # 5×7 点阵字体
+└── encoders/
+    └── webp.js        # animated WebP 编码器
 ```
 
 ## 部署
