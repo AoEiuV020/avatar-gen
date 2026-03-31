@@ -1,2 +1,10 @@
 node_modules/
-public/binary-grid.webp
+package-lock.json
+npm-debug.log*
+*.tgz
+.env
+.DS_Store
+
+# public 目录只保留 HTML，其余生成物全部忽略
+public/*
+!public/*.html

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Binary Grid - 9-bit Counter</title>
+  <title>Avatar Preview</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -33,32 +33,32 @@
       margin-bottom: 8px;
       font-weight: normal;
     }
-    img { display: block; border: 1px solid #eee; }
+    img { display: block; border: 1px solid #eee; image-rendering: pixelated; }
   </style>
 </head>
 <body>
-  <h1>9-bit Binary Counter</h1>
-  <p>3×3 九宫格显示 9 位二进制计数器 (0~511)，100ms/帧，51.2 秒一循环</p>
+  <h1>Avatar Preview</h1>
+  <p>动态头像预览，不同尺寸下的显示效果</p>
   <div class="grid">
     <div class="card">
       <h3>64px</h3>
-      <img src="binary-grid.webp" width="64" height="64" alt="64px">
+      <img src="avatar.webp" width="64" height="64" alt="64px">
     </div>
     <div class="card">
       <h3>128px</h3>
-      <img src="binary-grid.webp" width="128" height="128" alt="128px">
+      <img src="avatar.webp" width="128" height="128" alt="128px">
     </div>
     <div class="card">
       <h3>200px</h3>
-      <img src="binary-grid.webp" width="200" height="200" alt="200px">
+      <img src="avatar.webp" width="200" height="200" alt="200px">
     </div>
     <div class="card">
       <h3>300px</h3>
-      <img src="binary-grid.webp" width="300" height="300" alt="300px">
+      <img src="avatar.webp" width="300" height="300" alt="300px">
     </div>
     <div class="card">
-      <h3>450px (原始)</h3>
-      <img src="binary-grid.webp" width="450" height="450" alt="450px">
+      <h3>450px</h3>
+      <img src="avatar.webp" width="450" height="450" alt="450px">
     </div>
   </div>
 </body>

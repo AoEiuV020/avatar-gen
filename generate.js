@@ -1,78 +1,94 @@
-const sharp = require('sharp');
 const WebP = require('node-webpmux');
 const path = require('path');
 const fs = require('fs/promises');
 
-const SIZE = parseInt(process.env.SIZE || '450');
-const CELL = SIZE / 3;
+const SCALE = parseInt(process.env.SCALE || '1');
+const GLYPH_W = 5;
+const GLYPH_H = 7;
+// 字形占格子高度的 ~50%，与 SIZE=250 版本的留白比例一致
+const RAW_CELL = GLYPH_H * SCALE * 2;
+const CELL = RAW_CELL + ((RAW_CELL - GLYPH_W * SCALE) % 2); // 保证居中偏移为整数
+const SIZE = 3 * CELL;
 const TOTAL_FRAMES = 512;
 const FRAME_DELAY = 100; // ms
-const FONT_SIZE = Math.round(SIZE * 0.16);
 
-const CENTERS = [];
-for (let row = 0; row < 3; row++) {
-  for (let col = 0; col < 3; col++) {
-    CENTERS.push({ x: col * CELL + CELL / 2, y: row * CELL + CELL / 2 });
+// 5x7 bitmap font for digits 0 and 1 (1=black, 0=white)
+const FONT = {
+  '0': [
+    [0,1,1,1,0],
+    [1,0,0,0,1],
+    [1,0,0,1,1],
+    [1,0,1,0,1],
+    [1,1,0,0,1],
+    [1,0,0,0,1],
+    [0,1,1,1,0],
+  ],
+  '1': [
+    [0,0,1,0,0],
+    [0,1,1,0,0],
+    [0,0,1,0,0],
+    [0,0,1,0,0],
+    [0,0,1,0,0],
+    [0,0,1,0,0],
+    [0,1,1,1,0],
+  ],
+};
+
+function drawFrame(value) {
+  const buf = Buffer.alloc(SIZE * SIZE * 4);
+  // Fill white with full alpha
+  for (let i = 0; i < buf.length; i += 4) {
+    buf[i] = 255; buf[i+1] = 255; buf[i+2] = 255; buf[i+3] = 255;
   }
-}
 
-function generateSvgFrame(value) {
   const bin = value.toString(2);
-  const digits = CENTERS.map((pos, i) => {
-    if (i >= bin.length) return '';
-    return `<text x="${pos.x}" y="${pos.y}" class="d">${bin[i]}</text>`;
-  }).join('\n    ');
+  for (let idx = 0; idx < bin.length; idx++) {
+    const glyph = FONT[bin[idx]];
+    const row = Math.floor(idx / 3);
+    const col = idx % 3;
+    const cx = col * CELL + CELL / 2;
+    const cy = row * CELL + CELL / 2;
+    const ox = Math.round(cx - (GLYPH_W * SCALE) / 2);
+    const oy = Math.round(cy - (GLYPH_H * SCALE) / 2);
 
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${SIZE} ${SIZE}" width="${SIZE}" height="${SIZE}">
-  <style>.d{font-family:'Courier New',monospace;font-size:${FONT_SIZE}px;font-weight:bold;text-anchor:middle;dominant-baseline:central;fill:black}</style>
-  <rect width="${SIZE}" height="${SIZE}" fill="white"/>
-  <line x1="${CELL}" y1="0" x2="${CELL}" y2="${SIZE}" stroke="#ccc" stroke-width="2"/>
-  <line x1="${CELL * 2}" y1="0" x2="${CELL * 2}" y2="${SIZE}" stroke="#ccc" stroke-width="2"/>
-  <line x1="0" y1="${CELL}" x2="${SIZE}" y2="${CELL}" stroke="#ccc" stroke-width="2"/>
-  <line x1="0" y1="${CELL * 2}" x2="${SIZE}" y2="${CELL * 2}" stroke="#ccc" stroke-width="2"/>
-  ${digits}
-</svg>`;
+    for (let gy = 0; gy < GLYPH_H; gy++) {
+      for (let gx = 0; gx < GLYPH_W; gx++) {
+        if (!glyph[gy][gx]) continue;
+        for (let sy = 0; sy < SCALE; sy++) {
+          for (let sx = 0; sx < SCALE; sx++) {
+            const px = ox + gx * SCALE + sx;
+            const py = oy + gy * SCALE + sy;
+            if (px >= 0 && px < SIZE && py >= 0 && py < SIZE) {
+              const i = (py * SIZE + px) * 4;
+              buf[i] = 0; buf[i+1] = 0; buf[i+2] = 0;
+            }
+          }
+        }
+      }
+    }
+  }
+  return buf;
 }
 
 async function main() {
   const outputDir = path.join(__dirname, 'public');
 
-  console.log(`Generating ${TOTAL_FRAMES} frames (${SIZE}x${SIZE})...`);
+  console.log(`Generating ${TOTAL_FRAMES} frames (${SIZE}x${SIZE}, scale=${SCALE})...`);
   const start = Date.now();
 
-  // Initialize node-webpmux
   await WebP.Image.initLib();
 
-  // Render SVG frames and encode as individual WebP buffers
   const frames = [];
   for (let i = 0; i < TOTAL_FRAMES; i++) {
-    const svg = Buffer.from(generateSvgFrame(i));
-    const pngBuf = await sharp(svg).png().toBuffer();
-
-    // Create a WebP image from raw RGBA pixels
+    const rgba = drawFrame(i);
     const img = await WebP.Image.getEmptyImage();
-    // Render SVG → raw RGBA, then threshold to pure black/white for max compression
-    const rawRGBA = await sharp(svg).ensureAlpha().raw().toBuffer();
-    for (let p = 0; p < rawRGBA.length; p += 4) {
-      const lum = rawRGBA[p]; // R channel (grayscale, R≈G≈B)
-      const bw = lum > 160 ? 255 : 0; // threshold: keep text sharp, grid lines → white
-      rawRGBA[p] = bw;
-      rawRGBA[p + 1] = bw;
-      rawRGBA[p + 2] = bw;
-      // alpha stays 255
-    }
-    await img.setImageData(rawRGBA, {
+    await img.setImageData(rgba, {
       width: SIZE,
       height: SIZE,
       lossless: 4,
       method: 4
     });
-    const webpBuf = await img.save(null);
-
-    frames.push({
-      buffer: webpBuf,
-      delay: FRAME_DELAY
-    });
+    frames.push({ buffer: await img.save(null), delay: FRAME_DELAY });
 
     if ((i + 1) % 100 === 0) {
       console.log(`  Encoded ${i + 1}/${TOTAL_FRAMES} frames`);
@@ -82,8 +98,7 @@ async function main() {
   console.log(`Frames encoded in ${((Date.now() - start) / 1000).toFixed(1)}s`);
   console.log('Assembling animated WebP...');
 
-  // Assemble animation
-  const outputPath = path.join(outputDir, 'binary-grid.webp');
+  const outputPath = path.join(outputDir, 'avatar.webp');
   const animBuf = await WebP.Image.save(null, {
     width: SIZE,
     height: SIZE,
