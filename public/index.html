@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Binary Grid - 9-bit Counter</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #f0f0f0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      padding: 24px;
+      min-height: 100vh;
+    }
+    h1 { font-size: 20px; color: #333; margin-bottom: 16px; }
+    p { font-size: 14px; color: #666; margin-bottom: 24px; }
+    .grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      align-items: flex-end;
+    }
+    .card {
+      background: white;
+      border-radius: 8px;
+      padding: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      text-align: center;
+    }
+    .card h3 {
+      font-size: 13px;
+      color: #999;
+      margin-bottom: 8px;
+      font-weight: normal;
+    }
+    img { display: block; border: 1px solid #eee; }
+  </style>
+</head>
+<body>
+  <h1>9-bit Binary Counter</h1>
+  <p>3×3 九宫格显示 9 位二进制计数器 (0~511)，100ms/帧，51.2 秒一循环</p>
+  <div class="grid">
+    <div class="card">
+      <h3>64px</h3>
+      <img src="binary-grid.webp" width="64" height="64" alt="64px">
+    </div>
+    <div class="card">
+      <h3>128px</h3>
+      <img src="binary-grid.webp" width="128" height="128" alt="128px">
+    </div>
+    <div class="card">
+      <h3>200px</h3>
+      <img src="binary-grid.webp" width="200" height="200" alt="200px">
+    </div>
+    <div class="card">
+      <h3>300px</h3>
+      <img src="binary-grid.webp" width="300" height="300" alt="300px">
+    </div>
+    <div class="card">
+      <h3>450px (原始)</h3>
+      <img src="binary-grid.webp" width="450" height="450" alt="450px">
+    </div>
+  </div>
+</body>
+</html>

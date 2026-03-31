@@ -1,0 +1,16 @@
+{
+  "name": "binary-webp-pages",
+  "version": "1.0.0",
+  "description": "",
+  "main": "generate.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "node-webpmux": "^3.2.1",
+    "sharp": "^0.34.5"
+  }
+}
