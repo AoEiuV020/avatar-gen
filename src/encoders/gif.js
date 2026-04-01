@@ -6,7 +6,7 @@ const { GIFEncoder, quantize, applyPalette } = require('gifenc');
  * @param {object} opts
  * @param {number} opts.width
  * @param {number} opts.height
- * @param {number} opts.delay - 每帧延迟 (ms)
+ * @param {number|number[]} opts.delay - 每帧延迟 (ms)，数字或逐帧数组
  * @param {number} [opts.loops=0] - 循环次数，0=无限
  * @returns {Buffer} GIF 文件数据
  */
@@ -19,7 +19,7 @@ function encode(frames, { width, height, delay, loops = 0 }) {
     const index = applyPalette(rgba, palette);
     gif.writeFrame(index, width, height, {
       palette,
-      delay,
+      delay: Array.isArray(delay) ? delay[i] : delay,
       repeat: i === 0 ? loops : undefined,
     });
 

@@ -6,7 +6,7 @@ const WebP = require('node-webpmux');
  * @param {object} opts
  * @param {number} opts.width
  * @param {number} opts.height
- * @param {number} opts.delay - 每帧延迟 (ms)
+ * @param {number|number[]} opts.delay - 每帧延迟 (ms)，数字或逐帧数组
  * @param {number} [opts.loops=0] - 循环次数，0=无限
  * @returns {Promise<Buffer>} WebP 文件数据
  */
@@ -22,7 +22,7 @@ async function encode(frames, { width, height, delay, loops = 0 }) {
       lossless: 4,
       method: 4,
     });
-    webpFrames.push({ buffer: await img.save(null), delay });
+    webpFrames.push({ buffer: await img.save(null), delay: Array.isArray(delay) ? delay[i] : delay });
 
     if ((i + 1) % 100 === 0) {
       console.log(`  WebP: Encoded ${i + 1}/${frames.length} frames`);
