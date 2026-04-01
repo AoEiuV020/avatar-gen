@@ -7,7 +7,7 @@ const gifEncoder = require('./encoders/gif');
 const jpgEncoder = require('./encoders/jpg');
 const pngEncoder = require('./encoders/png');
 
-const SCALE = parseInt(process.env.SCALE || '1');
+const SCALE = parseInt(process.env.SCALE || '5');
 const TOTAL_FRAMES = 512;
 const FRAME_DELAY = 100;
 const OUTRO_DELAY = 1000;
