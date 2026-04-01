@@ -11,6 +11,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "gifenc": "^1.0.3",
+    "jpeg-js": "^0.4.4",
     "node-webpmux": "^3.2.1"
   }
 }

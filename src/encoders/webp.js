@@ -25,7 +25,7 @@ async function encode(frames, { width, height, delay, loops = 0 }) {
     webpFrames.push({ buffer: await img.save(null), delay });
 
     if ((i + 1) % 100 === 0) {
-      console.log(`  Encoded ${i + 1}/${frames.length} frames`);
+      console.log(`  WebP: Encoded ${i + 1}/${frames.length} frames`);
     }
   }
 
@@ -38,4 +38,19 @@ async function encode(frames, { width, height, delay, loops = 0 }) {
   });
 }
 
-module.exports = { encode };
+/**
+ * 将单帧 RGBA 数据编码为静态 WebP
+ * @param {Buffer} rgba - RGBA 像素数据
+ * @param {object} opts
+ * @param {number} opts.width
+ * @param {number} opts.height
+ * @returns {Promise<Buffer>} WebP 文件数据
+ */
+async function encodeStatic(rgba, { width, height }) {
+  await WebP.Image.initLib();
+  const img = await WebP.Image.getEmptyImage();
+  await img.setImageData(rgba, { width, height, lossless: 4, method: 4 });
+  return img.save(null);
+}
+
+module.exports = { encode, encodeStatic };

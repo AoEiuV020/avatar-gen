@@ -8,15 +8,31 @@ importers:
 
   .:
     dependencies:
+      gifenc:
+        specifier: ^1.0.3
+        version: 1.0.3
+      jpeg-js:
+        specifier: ^0.4.4
+        version: 0.4.4
       node-webpmux:
         specifier: ^3.2.1
         version: 3.2.1
 
 packages:
 
+  gifenc@1.0.3:
+    resolution: {integrity: sha512-xdr6AdrfGBcfzncONUOlXMBuc5wJDtOueE3c5rdG0oNgtINLD+f2iFZltrBRZYzACRbKr+mSVU/x98zv2u3jmw==}
+
+  jpeg-js@0.4.4:
+    resolution: {integrity: sha512-WZzeDOEtTOBK4Mdsar0IqEU5sMr3vSV2RqkAIzUEV2BHnUfKGyswWFPFwK5EeDo93K3FohSHbLAjj0s1Wzd+dg==}
+
   node-webpmux@3.2.1:
     resolution: {integrity: sha512-MKgpq9nFgo44pIVNx/umD3nkqb2E8oqQTfmstVsfNdx9uV4cX7a4LqA+d8AZd3v5tgJXwENKUFsXNP3bRLP8nQ==}
 
 snapshots:
+
+  gifenc@1.0.3: {}
+
+  jpeg-js@0.4.4: {}
 
   node-webpmux@3.2.1: {}

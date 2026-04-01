@@ -13,11 +13,11 @@
       min-height: 100vh;
     }
     h1 { font-size: 20px; color: #333; margin-bottom: 16px; }
-    h2 { font-size: 16px; color: #555; margin: 24px 0 16px; }
+    h2 { font-size: 16px; color: #555; margin: 24px 0 12px; }
     .grid {
       display: flex;
       flex-wrap: wrap;
-      gap: 20px;
+      gap: 16px;
       align-items: flex-end;
     }
     .card {
@@ -34,56 +34,63 @@
       font-weight: normal;
     }
     img { display: block; border: 1px solid #eee; image-rendering: pixelated; }
+    /* 棋盘格背景用于展示透明图片 */
+    .checkerboard {
+      background-image:
+        linear-gradient(45deg, #ccc 25%, transparent 25%),
+        linear-gradient(-45deg, #ccc 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #ccc 75%),
+        linear-gradient(-45deg, transparent 75%, #ccc 75%);
+      background-size: 16px 16px;
+      background-position: 0 0, 0 8px, 8px -8px, -8px 0;
+    }
+    .dark-bg { background: #333; }
+    .dark-bg img { border-color: #555; }
   </style>
 </head>
 <body>
   <h1>Avatar Preview</h1>
-  <h2>动态头像 (animated WebP)</h2>
+
+  <h2>动画 WebP</h2>
   <div class="grid">
-    <div class="card">
-      <h3>64px</h3>
-      <img src="avatar.webp" width="64" height="64" alt="64px">
-    </div>
-    <div class="card">
-      <h3>128px</h3>
-      <img src="avatar.webp" width="128" height="128" alt="128px">
-    </div>
-    <div class="card">
-      <h3>200px</h3>
-      <img src="avatar.webp" width="200" height="200" alt="200px">
-    </div>
-    <div class="card">
-      <h3>300px</h3>
-      <img src="avatar.webp" width="300" height="300" alt="300px">
-    </div>
-    <div class="card">
-      <h3>450px</h3>
-      <img src="avatar.webp" width="450" height="450" alt="450px">
-    </div>
+    <div class="card"><h3>64px</h3><img src="avatar.webp" width="64" height="64"></div>
+    <div class="card"><h3>200px</h3><img src="avatar.webp" width="200" height="200"></div>
+    <div class="card"><h3>450px</h3><img src="avatar.webp" width="450" height="450"></div>
   </div>
 
-  <h2>静态头像 (PNG)</h2>
+  <h2>动画 GIF</h2>
   <div class="grid">
-    <div class="card">
-      <h3>64px</h3>
-      <img src="avatar.png" width="64" height="64" alt="64px">
-    </div>
-    <div class="card">
-      <h3>128px</h3>
-      <img src="avatar.png" width="128" height="128" alt="128px">
-    </div>
-    <div class="card">
-      <h3>200px</h3>
-      <img src="avatar.png" width="200" height="200" alt="200px">
-    </div>
-    <div class="card">
-      <h3>300px</h3>
-      <img src="avatar.png" width="300" height="300" alt="300px">
-    </div>
-    <div class="card">
-      <h3>450px</h3>
-      <img src="avatar.png" width="450" height="450" alt="450px">
-    </div>
+    <div class="card"><h3>64px</h3><img src="avatar.gif" width="64" height="64"></div>
+    <div class="card"><h3>200px</h3><img src="avatar.gif" width="200" height="200"></div>
+    <div class="card"><h3>450px</h3><img src="avatar.gif" width="450" height="450"></div>
+  </div>
+
+  <h2>静态 JPG</h2>
+  <div class="grid">
+    <div class="card"><h3>64px</h3><img src="avatar.jpg" width="64" height="64"></div>
+    <div class="card"><h3>200px</h3><img src="avatar.jpg" width="200" height="200"></div>
+    <div class="card"><h3>450px</h3><img src="avatar.jpg" width="450" height="450"></div>
+  </div>
+
+  <h2>静态 WebP</h2>
+  <div class="grid">
+    <div class="card"><h3>64px</h3><img src="avatar-static.webp" width="64" height="64"></div>
+    <div class="card"><h3>200px</h3><img src="avatar-static.webp" width="200" height="200"></div>
+    <div class="card"><h3>450px</h3><img src="avatar-static.webp" width="450" height="450"></div>
+  </div>
+
+  <h2>透明 PNG · 黑字</h2>
+  <div class="grid">
+    <div class="card checkerboard"><h3>64px</h3><img src="avatar-black.png" width="64" height="64"></div>
+    <div class="card checkerboard"><h3>200px</h3><img src="avatar-black.png" width="200" height="200"></div>
+    <div class="card checkerboard"><h3>450px</h3><img src="avatar-black.png" width="450" height="450"></div>
+  </div>
+
+  <h2>透明 PNG · 白字</h2>
+  <div class="grid">
+    <div class="card dark-bg"><h3 style="color:#777">64px</h3><img src="avatar-white.png" width="64" height="64"></div>
+    <div class="card dark-bg"><h3 style="color:#777">200px</h3><img src="avatar-white.png" width="200" height="200"></div>
+    <div class="card dark-bg"><h3 style="color:#777">450px</h3><img src="avatar-white.png" width="450" height="450"></div>
   </div>
 </body>
 </html>
