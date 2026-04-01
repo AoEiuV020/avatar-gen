@@ -13,7 +13,7 @@
       min-height: 100vh;
     }
     h1 { font-size: 20px; color: #333; margin-bottom: 16px; }
-    p { font-size: 14px; color: #666; margin-bottom: 24px; }
+    h2 { font-size: 16px; color: #555; margin: 24px 0 16px; }
     .grid {
       display: flex;
       flex-wrap: wrap;
@@ -38,7 +38,7 @@
 </head>
 <body>
   <h1>Avatar Preview</h1>
-  <p>动态头像预览，不同尺寸下的显示效果</p>
+  <h2>动态头像 (animated WebP)</h2>
   <div class="grid">
     <div class="card">
       <h3>64px</h3>
@@ -59,6 +59,30 @@
     <div class="card">
       <h3>450px</h3>
       <img src="avatar.webp" width="450" height="450" alt="450px">
+    </div>
+  </div>
+
+  <h2>静态头像 (PNG)</h2>
+  <div class="grid">
+    <div class="card">
+      <h3>64px</h3>
+      <img src="avatar.png" width="64" height="64" alt="64px">
+    </div>
+    <div class="card">
+      <h3>128px</h3>
+      <img src="avatar.png" width="128" height="128" alt="128px">
+    </div>
+    <div class="card">
+      <h3>200px</h3>
+      <img src="avatar.png" width="200" height="200" alt="200px">
+    </div>
+    <div class="card">
+      <h3>300px</h3>
+      <img src="avatar.png" width="300" height="300" alt="300px">
+    </div>
+    <div class="card">
+      <h3>450px</h3>
+      <img src="avatar.png" width="450" height="450" alt="450px">
     </div>
   </div>
 </body>
