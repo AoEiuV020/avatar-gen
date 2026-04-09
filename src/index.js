@@ -44,12 +44,11 @@ async function main() {
   const { frames, width, height } = opaque;
   const staticFrame = frames[STATIC_VALUE];
 
-  // 动画帧序列：首帧(20, 100ms) + 计数(0→511, 各100ms) + 尾帧(20, 1000ms)
-  const animFrames = [staticFrame, ...frames, staticFrame];
+  // 动画帧序列：首帧(20, 1000ms) + 计数(0→511, 各100ms)
+  const animFrames = [staticFrame, ...frames];
   const animDelays = [
-    FRAME_DELAY,
-    ...Array(TOTAL_FRAMES).fill(FRAME_DELAY),
     OUTRO_DELAY,
+    ...Array(TOTAL_FRAMES).fill(FRAME_DELAY),
   ];
 
   console.log('Encoding outputs...');
