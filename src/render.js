@@ -23,7 +23,7 @@ function renderOne(value, font, scale, cell, size, bg, fg) {
     buf[i] = bg[0]; buf[i+1] = bg[1]; buf[i+2] = bg[2]; buf[i+3] = bg[3];
   }
 
-  const bin = value.toString(2);
+  const bin = value.toString(2).padStart(9, '0');
   for (let idx = 0; idx < bin.length; idx++) {
     const glyph = font.glyphs[bin[idx]];
     if (!glyph) continue;
