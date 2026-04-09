@@ -14,10 +14,11 @@ Node.js 20, pnpm, 纯 JS（无 TypeScript）
 
 ## 项目结构
 
-- `src/index.js` — 入口，配置参数与流程编排
+- `src/index.js` — 入口，配置参数与流程编排，自动加载 `sites/` 下的变体
 - `src/render.js` — 将数值序列渲染为 RGBA 帧（3×3 网格布局，每格显示二进制位）
 - `src/fonts/bitmap-5x7.js` — 5×7 点阵字体定义
 - `src/encoders/` — 各格式编码器（webp / gif / png / jpg）
+- `src/sites/` — 网站专用动画变体，每个文件导出 `{ prefix, formats?, build() }`
 - `public/` — 构建产物输出目录（git 忽略，仅保留 HTML）
 - `.github/workflows/deploy.yml` — CI 构建 + GitHub Pages 部署
 
@@ -27,13 +28,15 @@ Node.js 20, pnpm, 纯 JS（无 TypeScript）
 - 二进制字符串用 `padStart(9, '0')` 补前导零，确保始终填满 9 格
 - `SCALE` 环境变量控制点阵放大倍数，默认 5
 - `STATIC_VALUE` 环境变量控制静态帧使用的值，默认 20
+- 动画帧序列由 `src/sites/` 下的变体模块定义，每个变体独立控制帧排列、延迟和输出格式
 
 ## 构建产物
 
 | 文件 | 类型 |
 |------|------|
-| `avatar.webp` | 动画 WebP |
-| `avatar.gif` | 动画 GIF |
+| `avatar.webp` | 动画 WebP（默认变体） |
+| `avatar.gif` | 动画 GIF（默认变体） |
+| `zhihu-avatar.webp` | 动画 WebP（知乎变体，101帧填充确保静态提取正确） |
 | `avatar.jpg` | 静态 JPG（白底黑字） |
 | `avatar-static.webp` | 静态 WebP |
 | `avatar-black.png` | 透明底黑字 PNG |
