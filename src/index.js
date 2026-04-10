@@ -3,10 +3,8 @@ const fs = require('fs/promises');
 const fsSync = require('fs');
 const font = require('./fonts/bitmap-5x7');
 const { renderFrames } = require('./render');
-const webpEncoder = require('./encoders/webp');
-const gifEncoder = require('./encoders/gif');
-const jpgEncoder = require('./encoders/jpg');
-const pngEncoder = require('./encoders/png');
+const { padFrames } = require('./circle');
+const formats = require('./formats');
 
 const SCALE = parseInt(process.env.SCALE || '5');
 const TOTAL_FRAMES = 512;
@@ -17,7 +15,11 @@ const OUTPUT_DIR = path.join(__dirname, '..', 'public');
 const SITES_DIR = path.join(__dirname, 'sites');
 const variants = fsSync.readdirSync(SITES_DIR)
   .filter(f => f.endsWith('.js'))
-  .map(f => ({ name: f.replace('.js', ''), ...require(path.join(SITES_DIR, f)) }));
+  .map(f => require(path.join(SITES_DIR, f)));
+
+// 格式注册表
+const formatMap = new Map(formats.map(f => [f.id, f]));
+const ALL_FORMAT_IDS = formats.map(f => f.id);
 
 async function writeOutput(name, data) {
   const filePath = path.join(OUTPUT_DIR, name);
@@ -32,54 +34,71 @@ async function main() {
   console.log(`Rendering ${TOTAL_FRAMES} frames (scale=${SCALE})...`);
   const start = Date.now();
 
-  // 白底黑字帧（动画 + 静态不透明用）
+  // 方形渲染
   const opaque = renderFrames(allValues, font, SCALE);
-  // 透明底黑字（单帧）
   const transBlack = renderFrames([STATIC_VALUE], font, SCALE, {
     bg: [0, 0, 0, 0], fg: [0, 0, 0, 255],
   });
-  // 透明底白字（单帧）
   const transWhite = renderFrames([STATIC_VALUE], font, SCALE, {
     bg: [0, 0, 0, 0], fg: [255, 255, 255, 255],
   });
 
-  const elapsed = ((Date.now() - start) / 1000).toFixed(1);
-  console.log(`Rendered ${opaque.frames.length + 2} frames (${opaque.width}x${opaque.height}) in ${elapsed}s`);
+  // 圆形内边距变换
+  const circleOpaque = padFrames(opaque.frames, {
+    width: opaque.width, height: opaque.height, bg: [255, 255, 255, 255],
+  });
+  const circleTransBlack = padFrames(transBlack.frames, {
+    width: transBlack.width, height: transBlack.height, bg: [0, 0, 0, 0],
+  });
+  const circleTransWhite = padFrames(transWhite.frames, {
+    width: transWhite.width, height: transWhite.height, bg: [0, 0, 0, 0],
+  });
 
-  const { frames, width, height } = opaque;
-  const staticFrame = frames[STATIC_VALUE];
+  const renderData = {
+    opaque,
+    'trans-black': transBlack,
+    'trans-white': transWhite,
+  };
+  const circleData = {
+    opaque: circleOpaque,
+    'trans-black': circleTransBlack,
+    'trans-white': circleTransWhite,
+  };
+
+  const elapsed = ((Date.now() - start) / 1000).toFixed(1);
+  console.log(`Rendered in ${elapsed}s (square: ${opaque.width}x${opaque.height}, circle: ${circleOpaque.width}x${circleOpaque.height})`);
 
   console.log('Encoding outputs...');
 
-  // 按变体生成动画
   for (const variant of variants) {
-    const anim = variant.build(staticFrame, frames);
-    const fmts = variant.formats || ['webp', 'gif'];
-    console.log(`  [${variant.name}] ${anim.frames.length} frames → ${fmts.join(', ')}`);
+    const prefix = variant.name ? `${variant.name}-` : '';
+    const fmtIds = variant.formats || ALL_FORMAT_IDS;
+    const label = variant.name || 'default';
+    console.log(`  [${label}] ${fmtIds.length} formats`);
 
-    if (fmts.includes('webp')) {
-      const webpBuf = await webpEncoder.encode(anim.frames, { width, height, delay: anim.delays });
-      await writeOutput(`${variant.prefix}avatar.webp`, webpBuf);
-    }
+    for (const fmtId of fmtIds) {
+      const fmt = formatMap.get(fmtId);
+      if (!fmt) {
+        console.warn(`  ⚠ Unknown format: ${fmtId}`);
+        continue;
+      }
 
-    if (fmts.includes('gif')) {
-      const gifBuf = gifEncoder.encode(anim.frames, { width, height, delay: anim.delays });
-      await writeOutput(`${variant.prefix}avatar.gif`, gifBuf);
+      const source = fmt.circle ? circleData : renderData;
+      const { frames, width, height } = source[fmt.render];
+
+      let data;
+      if (fmt.type === 'animated') {
+        const staticFrame = frames[STATIC_VALUE];
+        const anim = variant.build(staticFrame, frames);
+        data = await fmt.encode(anim, { width, height });
+      } else {
+        const frame = fmt.render === 'opaque' ? frames[STATIC_VALUE] : frames[0];
+        data = await fmt.encode(frame, { width, height });
+      }
+
+      await writeOutput(`${prefix}${fmt.filename}`, data);
     }
   }
-
-  // 静态产物（与变体无关）
-  const jpgBuf = jpgEncoder.encode(staticFrame, { width, height });
-  await writeOutput('avatar.jpg', jpgBuf);
-
-  const staticWebpBuf = await webpEncoder.encodeStatic(staticFrame, { width, height });
-  await writeOutput('avatar-static.webp', staticWebpBuf);
-
-  const blackPngBuf = pngEncoder.encode(transBlack.frames[0], { width, height });
-  await writeOutput('avatar-black.png', blackPngBuf);
-
-  const whitePngBuf = pngEncoder.encode(transWhite.frames[0], { width, height });
-  await writeOutput('avatar-white.png', whitePngBuf);
 
   console.log('Done!');
 }

@@ -34,7 +34,7 @@
       font-weight: normal;
     }
     img { display: block; border: 1px solid #eee; image-rendering: pixelated; }
-    /* 棋盘格背景用于展示透明图片 */
+    .circle img { border-radius: 50%; }
     .checkerboard {
       background-image:
         linear-gradient(45deg, #ccc 25%, transparent 25%),
@@ -56,41 +56,26 @@
     <div class="card"><h3>64px</h3><img src="avatar.webp" width="64" height="64"></div>
     <div class="card"><h3>200px</h3><img src="avatar.webp" width="200" height="200"></div>
     <div class="card"><h3>450px</h3><img src="avatar.webp" width="450" height="450"></div>
+    <div class="card circle"><h3>200px 圆形裁剪</h3><img src="avatar.webp" width="200" height="200"></div>
   </div>
 
-  <h2>动画 GIF</h2>
+  <h2>方形</h2>
   <div class="grid">
-    <div class="card"><h3>64px</h3><img src="avatar.gif" width="64" height="64"></div>
-    <div class="card"><h3>200px</h3><img src="avatar.gif" width="200" height="200"></div>
-    <div class="card"><h3>450px</h3><img src="avatar.gif" width="450" height="450"></div>
+    <div class="card"><h3>GIF</h3><img src="avatar.gif" width="200" height="200"></div>
+    <div class="card"><h3>JPG</h3><img src="avatar.jpg" width="200" height="200"></div>
+    <div class="card"><h3>静态 WebP</h3><img src="avatar-static.webp" width="200" height="200"></div>
+    <div class="card checkerboard"><h3>PNG 黑字</h3><img src="avatar-black.png" width="200" height="200"></div>
+    <div class="card dark-bg"><h3 style="color:#777">PNG 白字</h3><img src="avatar-white.png" width="200" height="200"></div>
   </div>
 
-  <h2>静态 JPG</h2>
+  <h2>圆形变体</h2>
   <div class="grid">
-    <div class="card"><h3>64px</h3><img src="avatar.jpg" width="64" height="64"></div>
-    <div class="card"><h3>200px</h3><img src="avatar.jpg" width="200" height="200"></div>
-    <div class="card"><h3>450px</h3><img src="avatar.jpg" width="450" height="450"></div>
-  </div>
-
-  <h2>静态 WebP</h2>
-  <div class="grid">
-    <div class="card"><h3>64px</h3><img src="avatar-static.webp" width="64" height="64"></div>
-    <div class="card"><h3>200px</h3><img src="avatar-static.webp" width="200" height="200"></div>
-    <div class="card"><h3>450px</h3><img src="avatar-static.webp" width="450" height="450"></div>
-  </div>
-
-  <h2>透明 PNG · 黑字</h2>
-  <div class="grid">
-    <div class="card checkerboard"><h3>64px</h3><img src="avatar-black.png" width="64" height="64"></div>
-    <div class="card checkerboard"><h3>200px</h3><img src="avatar-black.png" width="200" height="200"></div>
-    <div class="card checkerboard"><h3>450px</h3><img src="avatar-black.png" width="450" height="450"></div>
-  </div>
-
-  <h2>透明 PNG · 白字</h2>
-  <div class="grid">
-    <div class="card dark-bg"><h3 style="color:#777">64px</h3><img src="avatar-white.png" width="64" height="64"></div>
-    <div class="card dark-bg"><h3 style="color:#777">200px</h3><img src="avatar-white.png" width="200" height="200"></div>
-    <div class="card dark-bg"><h3 style="color:#777">450px</h3><img src="avatar-white.png" width="450" height="450"></div>
+    <div class="card circle"><h3>动画 WebP</h3><img src="avatar-circle.webp" width="200" height="200"></div>
+    <div class="card circle"><h3>GIF</h3><img src="avatar-circle.gif" width="200" height="200"></div>
+    <div class="card circle"><h3>JPG</h3><img src="avatar-circle.jpg" width="200" height="200"></div>
+    <div class="card circle"><h3>静态 WebP</h3><img src="avatar-circle-static.webp" width="200" height="200"></div>
+    <div class="card circle checkerboard"><h3>PNG 黑字</h3><img src="avatar-circle-black.png" width="200" height="200"></div>
+    <div class="card circle dark-bg"><h3 style="color:#777">PNG 白字</h3><img src="avatar-circle-white.png" width="200" height="200"></div>
   </div>
 </body>
 </html>
