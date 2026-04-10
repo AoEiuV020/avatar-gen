@@ -15,9 +15,8 @@ Node.js 20, pnpm, 纯 JS（无 TypeScript）
 ## 项目结构
 
 - `src/index.js` — 入口，配置参数与流程编排，自动加载 `sites/` 下的变体
-- `src/render.js` — 将数值序列渲染为 RGBA 帧（3×3 网格布局，每格显示二进制位）
-- `src/circle.js` — 圆形内边距变换，给帧添加 padding 使内容落在正方形内切圆内
-- `src/formats.js` — 格式注册表，定义所有格式 ID 及编码逻辑，自动派生圆形变体
+- `src/render.js` — 将数值序列渲染为 RGBA 帧（3×3 网格布局，space-evenly 对齐）
+- `src/formats.js` — 格式注册表，定义所有格式 ID 及编码逻辑
 - `src/fonts/bitmap-5x7.js` — 5×7 点阵字体定义
 - `src/encoders/` — 各格式编码器（webp / gif / png / jpg）
 - `src/sites/` — 网站专用动画变体，每个文件导出 `{ name?, formats?, build() }`
@@ -34,16 +33,14 @@ Node.js 20, pnpm, 纯 JS（无 TypeScript）
 
 ### 格式 ID 系统
 
-- `src/formats.js` 定义 6 个基础格式（方形），自动派生 6 个圆形变体，共 12 个格式 ID
-- 基础格式：`anim-webp`、`anim-gif`、`static-jpg`、`static-webp`、`static-png-black`、`static-png-white`
-- 圆形变体：每个基础格式自动加 `circle-` 前缀，文件名中 `avatar` → `avatar-circle`
-- 每个格式定义包含：`id`、`type`（animated/static）、`render`（数据源）、`circle`（是否圆形）、`filename`、`encode`
+- `src/formats.js` 定义 6 个格式 ID
+- 格式：`anim-webp`、`anim-gif`、`static-jpg`、`static-webp`、`static-png-black`、`static-png-white`
+- 每个格式定义包含：`id`、`type`（animated/static）、`render`（数据源）、`filename`、`encode`
 
-### 圆形内边距
+### 网格布局
 
-- `src/circle.js` 对 RGBA 帧进行后处理：扩大画布，原始内容居中
-- 新画布尺寸 = ⌈原尺寸 × √2 × (1 + margin)⌉，默认 margin=5%
-- 确保 3×3 网格完全落在内切圆内，适配平台圆形裁剪
+- 3×3 网格采用 space-evenly 对齐：字形间距和边缘留白均等分配
+- 字形更紧凑，边缘留白更大，方形和圆形裁剪下内容均完整可见
 
 ### Site 变体
 
@@ -54,7 +51,7 @@ Node.js 20, pnpm, 纯 JS（无 TypeScript）
 
 ## 构建产物
 
-### 默认变体（无前缀，全部 12 格式）
+### 默认变体（无前缀，全部 6 格式）
 
 | 文件 | 格式 ID | 类型 |
 |------|---------|------|
@@ -64,19 +61,12 @@ Node.js 20, pnpm, 纯 JS（无 TypeScript）
 | `avatar-static.webp` | `static-webp` | 静态 WebP |
 | `avatar-black.png` | `static-png-black` | 透明底黑字 PNG |
 | `avatar-white.png` | `static-png-white` | 透明底白字 PNG |
-| `avatar-circle.webp` | `circle-anim-webp` | 圆形动画 WebP |
-| `avatar-circle.gif` | `circle-anim-gif` | 圆形动画 GIF |
-| `avatar-circle.jpg` | `circle-static-jpg` | 圆形静态 JPG |
-| `avatar-circle-static.webp` | `circle-static-webp` | 圆形静态 WebP |
-| `avatar-circle-black.png` | `circle-static-png-black` | 圆形透明底黑字 PNG |
-| `avatar-circle-white.png` | `circle-static-png-white` | 圆形透明底白字 PNG |
 
 ### 知乎变体（`zhihu-` 前缀）
 
 | 文件 | 格式 ID | 类型 |
 |------|---------|------|
 | `zhihu-avatar.webp` | `anim-webp` | 动画 WebP（101帧填充确保静态提取正确） |
-| `zhihu-avatar-circle.webp` | `circle-anim-webp` | 圆形动画 WebP |
 
 ## 边界
 

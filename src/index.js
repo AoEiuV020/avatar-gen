@@ -3,7 +3,6 @@ const fs = require('fs/promises');
 const fsSync = require('fs');
 const font = require('./fonts/bitmap-5x7');
 const { renderFrames } = require('./render');
-const { padFrames } = require('./circle');
 const formats = require('./formats');
 
 const SCALE = parseInt(process.env.SCALE || '5');
@@ -34,7 +33,7 @@ async function main() {
   console.log(`Rendering ${TOTAL_FRAMES} frames (scale=${SCALE})...`);
   const start = Date.now();
 
-  // 方形渲染
+  // 渲染所有帧
   const opaque = renderFrames(allValues, font, SCALE);
   const transBlack = renderFrames([STATIC_VALUE], font, SCALE, {
     bg: [0, 0, 0, 0], fg: [0, 0, 0, 255],
@@ -43,30 +42,14 @@ async function main() {
     bg: [0, 0, 0, 0], fg: [255, 255, 255, 255],
   });
 
-  // 圆形内边距变换
-  const circleOpaque = padFrames(opaque.frames, {
-    width: opaque.width, height: opaque.height, bg: [255, 255, 255, 255],
-  });
-  const circleTransBlack = padFrames(transBlack.frames, {
-    width: transBlack.width, height: transBlack.height, bg: [0, 0, 0, 0],
-  });
-  const circleTransWhite = padFrames(transWhite.frames, {
-    width: transWhite.width, height: transWhite.height, bg: [0, 0, 0, 0],
-  });
-
   const renderData = {
     opaque,
     'trans-black': transBlack,
     'trans-white': transWhite,
   };
-  const circleData = {
-    opaque: circleOpaque,
-    'trans-black': circleTransBlack,
-    'trans-white': circleTransWhite,
-  };
 
   const elapsed = ((Date.now() - start) / 1000).toFixed(1);
-  console.log(`Rendered in ${elapsed}s (square: ${opaque.width}x${opaque.height}, circle: ${circleOpaque.width}x${circleOpaque.height})`);
+  console.log(`Rendered in ${elapsed}s (${opaque.width}x${opaque.height})`);
 
   console.log('Encoding outputs...');
 
@@ -83,8 +66,7 @@ async function main() {
         continue;
       }
 
-      const source = fmt.circle ? circleData : renderData;
-      const { frames, width, height } = source[fmt.render];
+      const { frames, width, height } = renderData[fmt.render];
 
       let data;
       if (fmt.type === 'animated') {

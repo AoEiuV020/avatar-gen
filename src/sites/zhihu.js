@@ -8,7 +8,7 @@ const PAD_DELAY = 11;
 
 module.exports = {
   name: 'zhihu',
-  formats: ['anim-webp', 'circle-anim-webp'],
+  formats: ['anim-webp'],
   build(staticFrame, frames) {
     return {
       frames: [...Array(PAD_COUNT).fill(staticFrame), ...frames],

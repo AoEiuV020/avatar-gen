@@ -13,11 +13,19 @@ function renderFrames(values, font, scale = 1, { bg = [255,255,255,255], fg = [0
   const cell = rawCell + ((rawCell - font.width * scale) % 2);
   const size = 3 * cell;
 
-  const frames = values.map(value => renderOne(value, font, scale, cell, size, bg, fg));
+  // space-evenly: 边缘和字形之间等间距
+  const glyphW = font.width * scale;
+  const glyphH = font.height * scale;
+  const gapX = (size - 3 * glyphW) / 4;
+  const gapY = (size - 3 * glyphH) / 4;
+  const layout = { size, glyphW, glyphH, gapX, gapY };
+
+  const frames = values.map(value => renderOne(value, font, scale, layout, bg, fg));
   return { frames, width: size, height: size };
 }
 
-function renderOne(value, font, scale, cell, size, bg, fg) {
+function renderOne(value, font, scale, layout, bg, fg) {
+  const { size, glyphW, glyphH, gapX, gapY } = layout;
   const buf = Buffer.alloc(size * size * 4);
   for (let i = 0; i < buf.length; i += 4) {
     buf[i] = bg[0]; buf[i+1] = bg[1]; buf[i+2] = bg[2]; buf[i+3] = bg[3];
@@ -30,10 +38,8 @@ function renderOne(value, font, scale, cell, size, bg, fg) {
 
     const row = Math.floor(idx / 3);
     const col = idx % 3;
-    const cx = col * cell + cell / 2;
-    const cy = row * cell + cell / 2;
-    const ox = Math.round(cx - (font.width * scale) / 2);
-    const oy = Math.round(cy - (font.height * scale) / 2);
+    const ox = Math.round((col + 1) * gapX + col * glyphW);
+    const oy = Math.round((row + 1) * gapY + row * glyphH);
 
     for (let gy = 0; gy < font.height; gy++) {
       for (let gx = 0; gx < font.width; gx++) {
